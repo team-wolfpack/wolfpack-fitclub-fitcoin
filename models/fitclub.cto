@@ -1,0 +1,56 @@
+/**
+ * Sample business network definition.
+ */
+namespace org.fitclub.rewards
+
+enum MemberStatus {
+  o ACTIVE
+  o INACTIVE
+}
+
+abstract participant Person identified by personId {
+  o String personId
+  o String personFirstName
+  o String personLastName
+}
+
+participant Member extends Person {
+  --> Club clubId
+  o Integer rewardsPointsBalance
+  o MemberStatus memberStatus
+}
+
+participant Club identified by clubId {
+  o String clubId
+  o String clubName
+  --> ClubOwner clubOwnerId
+}
+
+participant ClubOwner extends Person {
+}
+
+abstract transaction RewardsPointsChange {
+  --> Member member
+  o Integer pointChange
+}
+
+transaction ReceivePoints extends RewardsPointsChange {
+  o String activity
+  o DateTime activityDate
+}
+
+transaction RedeemPoints extends RewardsPointsChange {
+  o String redeemedFor
+  o DateTime redeemedDate
+}
+
+transaction AddMember {
+  o String memberId
+  o String memberFirstName
+  o String memberLastName
+  --> Club clubId
+}
+
+transaction InactivateMember {
+  --> Member member
+}
