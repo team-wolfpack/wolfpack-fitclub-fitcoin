@@ -1,7 +1,7 @@
 /**
  * Sample business network definition.
  */
-namespace org.fitclub.rewards
+namespace org.fitclub.fitcoin
 
 enum MemberStatus {
   o ACTIVE
@@ -12,43 +12,70 @@ abstract participant Person identified by personId {
   o String personId
   o String personFirstName
   o String personLastName
+  o Integer fitCoinBalance
 }
 
 participant Member extends Person {
   --> Club clubId
-  o Integer rewardsPointsBalance
   o MemberStatus memberStatus
 }
 
 participant Club identified by clubId {
   o String clubId
   o String clubName
-  --> ClubOwner clubOwnerId
+  --> ClubOwner clubOwner
 }
 
 participant ClubOwner extends Person {
 }
 
-abstract transaction RewardsPointsChange {
-  --> Member member
-  o Integer pointChange
+participant StoreOwner extends Person {
+  o String storeName
+  --> Club club
 }
 
-transaction ReceivePoints extends RewardsPointsChange {
+abstract transaction FitCoinExchange {
+  o Integer fitCoinQuantity
+}
+
+transaction ReceiveFitCoins extends FitCoinExchange {
+  --> Member member
   o String activity
   o DateTime activityDate
 }
 
-transaction RedeemPoints extends RewardsPointsChange {
+transaction RedeemFitCoins extends FitCoinExchange {
+  --> Member member
+  --> StoreOwner store
   o String redeemedFor
   o DateTime redeemedDate
+}
+
+transaction AddClubOwner {
+  o String clubOwnerId
+  o String clubOwnerFirstName
+  o String clubOwnerLastName
+}
+
+transaction AddClub {
+  o String clubId
+  o String clubName
+  --> ClubOwner clubOwner
 }
 
 transaction AddMember {
   o String memberId
   o String memberFirstName
   o String memberLastName
-  --> Club clubId
+  --> Club club
+}
+
+transaction AddStoreOwner {
+  o String storeOwnerId
+  o String storeOwnerFirstName
+  o String storeOwnerLastName
+  o String storeName
+  --> Club club
 }
 
 transaction InactivateMember {
